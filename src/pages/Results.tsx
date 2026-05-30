@@ -67,7 +67,7 @@ export default function Results() {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: (view === 'pie' ? 'bottom' : 'top') as const,
+        position: (view === 'pie' ? 'bottom' : 'top') as 'bottom' | 'top',
         labels: { color: 'rgba(240,240,255,0.7)', font: { family: "'Inter', sans-serif" } }
       }
     },
