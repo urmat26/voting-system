@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>Голосование — Выпускной 2026</title>
+  <meta name="description" content="Проголосуй за формат выпускного! Быстро и анонимно." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Brand -->
+  <div class="brand">
+    <div class="brand-icon">🗳️</div>
+    <span class="brand-text">Школьное голосование</span>
+  </div>
+
+  <!-- Config warning (скрыт если всё ок) -->
+  <div class="config-warning" id="config-warning" style="display:none;">
+    <strong>⚙️ Требуется настройка API</strong>
+    Откройте файл <code>config.js</code> и укажите ваш <strong>BIN_ID</strong> и <strong>API_KEY</strong>
+    с сайта <a href="https://jsonbin.io" target="_blank" style="color:#ffd700;">jsonbin.io</a>.<br>
+    После этого перезагрузите страницу.
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Голосование открыто
+    </div>
+    <h1 class="hero-title" id="question-title">Загружаем вопрос…</h1>
+    <p class="hero-subtitle">Выбери один вариант и нажми «Проголосовать». Голосовать можно только один раз.</p>
+  </div>
+
+  <!-- Already voted banner -->
+  <div class="already-voted-banner" id="already-voted-banner">
+    ⚠️ Вы уже проголосовали с этого устройства
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" id="error-msg" style="display:none;"></div>
+
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    Загружаем данные…
+  </div>
+
+  <!-- Vote Form -->
+  <div id="vote-form" style="display:none;">
+    <div class="card">
+      <div class="options-grid" id="options-grid">
+        <!-- Динамически заполняется через app.js -->
+      </div>
+
+      <button class="btn-submit" id="submit-btn" disabled>
+        Выбери вариант выше ↑
+      </button>
+    </div>
+  </div>
+
+  <!-- Success Screen -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">
+      <span id="success-icon-inner">✓</span>
+    </div>
+    <h2 class="success-title" id="success-title-text">Голос принят!</h2>
+    <p class="success-sub" id="success-sub-text">Спасибо за участие. Текущие результаты:</p>
+    <p style="font-size:13px; color: rgba(240,240,255,0.45); margin-bottom: 20px;" id="chosen-option"></p>
+
+    <!-- Mini results bars -->
+    <div class="card mini-results" id="mini-results"></div>
+
+    <p style="margin-top:16px; font-size:13px; color: rgba(240,240,255,0.4);">
+      Всего проголосовало: <strong id="total-votes-success" style="color:#f0f0ff;">—</strong>
+    </p>
+
+    <!-- Ссылка на экран результатов -->
+    <div class="footer-link" style="margin-top:28px;">
+      <a href="results.html" target="_blank">📊 Открыть полные результаты</a>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
