@@ -186,6 +186,9 @@ function showSuccessScreen(data) {
   }
 
   $('total-votes-success').textContent = data.total_votes;
+  
+  // Праздничный салют 🎉
+  fireConfetti();
 }
 
 function showAlreadyVoted() {
@@ -255,5 +258,62 @@ async function init() {
 // ── Event Listeners ──
 document.addEventListener('DOMContentLoaded', () => {
   $('submit-btn').addEventListener('click', submitVote);
+  const shareBtn = $('share-btn');
+  if (shareBtn) shareBtn.addEventListener('click', handleShare);
   init();
 });
+
+// ══════════════════════════════
+//  Confetti & Share
+// ══════════════════════════════
+
+function fireConfetti() {
+  if (typeof confetti !== 'undefined') {
+    const duration = 2500;
+    const end = Date.now() + duration;
+
+    (function frame() {
+      confetti({
+        particleCount: 4,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#6c63ff', '#43e97b', '#f7971e', '#ff6584']
+      });
+      confetti({
+        particleCount: 4,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#6c63ff', '#43e97b', '#f7971e', '#ff6584']
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    }());
+  }
+}
+
+async function handleShare(e) {
+  e.preventDefault();
+  const shareData = {
+    title: 'Голосование за выпускной!',
+    text: 'Привет! Я проголосовал за формат выпускного 2026. Выбери и ты!',
+    url: window.location.href
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(shareData.url);
+      const btn = $('share-btn');
+      const oldText = btn.textContent;
+      btn.textContent = '✅ Ссылка скопирована!';
+      setTimeout(() => btn.textContent = oldText, 2500);
+    }
+  } catch (err) {
+    console.log('Share canceled or failed', err);
+  }
+}

@@ -6,6 +6,13 @@
   <meta name="theme-color" content="#0a0a0f" />
   <title>Голосование — Выпускной 2026</title>
   <meta name="description" content="Проголосуй за формат выпускного! Быстро и анонимно." />
+  
+  <!-- Open Graph / SEO -->
+  <meta property="og:title" content="Голосование — Выпускной 2026" />
+  <meta property="og:description" content="Проголосуй за формат выпускного! Быстро и анонимно." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1523580494112-071dcb849766?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" />
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -79,14 +86,16 @@
       Всего проголосовало: <strong id="total-votes-success" style="color:#f0f0ff;">—</strong>
     </p>
 
-    <!-- Ссылка на экран результатов -->
-    <div class="footer-link" style="margin-top:28px;">
-      <a href="results.html" target="_blank">📊 Открыть полные результаты</a>
+    <!-- Ссылка на результаты и шаринг -->
+    <div class="footer-link" style="margin-top:28px; display:flex; gap:10px; flex-wrap:wrap;">
+      <a href="results.html" target="_blank">📊 Полные результаты</a>
+      <a href="#" id="share-btn" style="background: rgba(255,255,255,0.08);">📤 Поделиться</a>
     </div>
   </div>
 
 </div><!-- /container -->
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script src="config.js"></script>
 <script src="app.js"></script>
 </body>
