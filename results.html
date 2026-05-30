@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>Результаты — Выпускной 2026</title>
+  <meta name="description" content="Результаты голосования за формат выпускного в реальном времени." />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="container container--wide">
+
+  <!-- Brand -->
+  <div class="brand">
+    <div class="brand-icon">📊</div>
+    <span class="brand-text">Результаты голосования</span>
+  </div>
+
+  <!-- Config warning -->
+  <div class="config-warning" id="config-warning" style="display:none;">
+    <strong>⚙️ Требуется настройка API</strong>
+    Откройте файл <code>config.js</code> и укажите ваш <strong>BIN_ID</strong> и <strong>API_KEY</strong>
+    с сайта <a href="https://jsonbin.io" target="_blank" style="color:#ffd700;">jsonbin.io</a>.
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" id="error-msg" style="display:none;"></div>
+
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    Загружаем результаты…
+  </div>
+
+  <!-- Main content (скрыт до загрузки) -->
+  <div id="main-content" style="display:none;">
+
+    <!-- Header row -->
+    <div class="results-header">
+      <div>
+        <h1 class="results-title">Какой формат выпускного?</h1>
+        <p style="font-size:14px; color: rgba(240,240,255,0.45); margin-top:4px;">
+          Голосование · Выпускной 2026
+        </p>
+      </div>
+      <div class="results-meta">
+        <div class="live-badge">
+          <span class="dot"></span>
+          Live
+        </div>
+        <div class="total-count">
+          Проголосовали: <span id="total-count-val">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-num" id="stat-total">0</span>
+        <span class="stat-label">Всего голосов</span>
+      </div>
+      <div class="stat-card" style="grid-column: span 2;">
+        <span class="stat-num" style="font-size:22px;" id="stat-leader">—</span>
+        <span class="stat-label">Лидирует</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" id="stat-leader-pct">—</span>
+        <span class="stat-label">Доля лидера</span>
+      </div>
+    </div>
+
+    <!-- Chart tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-view="bar">📊 Столбчатая</button>
+      <button class="tab-btn"        data-view="pie">🥧 Круговая</button>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-wrapper">
+      <div class="chart-canvas-wrap">
+        <canvas id="vote-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Detailed bars -->
+    <h2 style="font-size:16px; font-weight:700; color: rgba(240,240,255,0.6);
+               text-transform:uppercase; letter-spacing:.06em; margin-bottom:16px;">
+      Детальный разбор
+    </h2>
+    <div class="result-bars" id="result-bars">
+      <!-- Заполняется через results.js -->
+    </div>
+
+    <!-- Last update timestamp -->
+    <p class="last-update" id="last-update">Ожидание обновления…</p>
+
+    <!-- Link to voting page -->
+    <div class="footer-link">
+      <a href="index.html">🗳️ Перейти к голосованию</a>
+    </div>
+
+  </div><!-- /main-content -->
+
+</div><!-- /container -->
+
+<script src="config.js"></script>
+<script src="results.js"></script>
+</body>
+</html>
