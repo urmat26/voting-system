@@ -2,28 +2,16 @@ import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
+  Chart as ChartJS, CategoryScale, LinearScale, BarElement,
+  Title, Tooltip, Legend, ArcElement
 } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { fetchData, VotingData } from '../api';
 import { CONFIG } from '../config';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
+
+const COLORS = ['#e8ff47','#3de8ff','#ff7a27','#ff3d6e'];
 
 export default function Results() {
   const [data, setData] = useState<VotingData | null>(null);
@@ -33,32 +21,31 @@ export default function Results() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetchData();
-        setData(res);
+        setData(await fetchData());
         setLastUpdate(new Date().toLocaleTimeString('ru-RU'));
-      } catch (err) {
-        console.error(err);
-      }
+      } catch (err) { console.error(err); }
     };
     load();
-    const interval = setInterval(load, CONFIG.POLL_INTERVAL);
-    return () => clearInterval(interval);
+    const iv = setInterval(load, CONFIG.POLL_INTERVAL);
+    return () => clearInterval(iv);
   }, []);
+
+  const sorted = useMemo(() => data ? [...data.options].sort((a,b) => b.votes - a.votes) : [], [data]);
+  const winner = sorted[0];
+  const winnerPct = data && data.total_votes > 0 ? Math.round((winner.votes / data.total_votes) * 100) : 0;
 
   const chartData = useMemo(() => {
     if (!data) return null;
     return {
       labels: data.options.map(o => `${o.emoji} ${o.text}`),
-      datasets: [
-        {
-          label: 'Голоса',
-          data: data.options.map(o => o.votes),
-          backgroundColor: CONFIG.OPTION_COLORS.map(c => c.bar + '40'),
-          borderColor: CONFIG.OPTION_COLORS.map(c => c.bar),
-          borderWidth: 2,
-          borderRadius: view === 'bar' ? 10 : 0,
-        }
-      ]
+      datasets: [{
+        label: 'Голоса',
+        data: data.options.map(o => o.votes),
+        backgroundColor: COLORS.map(c => c + '33'),
+        borderColor: COLORS,
+        borderWidth: 2,
+        borderRadius: view === 'bar' ? 8 : 0,
+      }]
     };
   }, [data, view]);
 
@@ -68,93 +55,135 @@ export default function Results() {
     plugins: {
       legend: {
         position: (view === 'pie' ? 'bottom' : 'top') as 'bottom' | 'top',
-        labels: { color: 'rgba(240,240,255,0.7)', font: { family: "'Inter', sans-serif" } }
+        labels: { color: 'rgba(245,245,240,0.5)', font: { family: "'DM Sans', sans-serif", size: 12 } }
       }
     },
     scales: view === 'bar' ? {
-      x: { ticks: { color: 'rgba(240,240,255,0.55)' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-      y: { ticks: { color: 'rgba(240,240,255,0.55)', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      x: { ticks: { color: 'rgba(245,245,240,0.4)' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      y: { ticks: { color: 'rgba(245,245,240,0.4)', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.04)' } }
     } : undefined
   };
 
   if (!data || !chartData) {
-    return <div className="loader"><div className="spinner"></div>Загружаем результаты…</div>;
+    return <div className="loader"><div className="spinner" /><span>Загружаем результаты…</span></div>;
   }
-
-  const sortedOptions = [...data.options].sort((a, b) => b.votes - a.votes);
-  const leader = sortedOptions[0];
-  const leaderPct = data.total_votes > 0 ? Math.round((leader.votes / data.total_votes) * 100) : 0;
 
   return (
     <div className="container container--wide">
-      <div className="brand">
-        <div className="brand-icon">📊</div>
-        <span className="brand-text">Результаты голосования</span>
-      </div>
+      {/* Nav */}
+      <nav className="nav">
+        <span className="nav-logo">
+          <div className="nav-logo-mark">📊</div>
+          <span className="nav-logo-text">Результаты</span>
+        </span>
+        <Link to="/" className="nav-link">← Голосовать</Link>
+      </nav>
 
-      <div className="results-header">
-        <div>
-          <h1 className="results-title">{data.question}</h1>
-        </div>
-        <div className="results-meta">
-          <div className="live-badge"><span className="dot"></span>Live</div>
-          <div className="total-count">Проголосовали: <span>{data.total_votes}</span></div>
-        </div>
-      </div>
-
-      <div className="stats-grid">
-        <div className="stat-card">
-          <span className="stat-num">{data.total_votes}</span>
-          <span className="stat-label">Всего голосов</span>
-        </div>
-        <div className="stat-card" style={{ gridColumn: 'span 2' }}>
-          <span className="stat-num" style={{ fontSize: 22 }}>{leader.emoji} {leader.text}</span>
-          <span className="stat-label">Лидирует</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-num">{leaderPct}%</span>
-          <span className="stat-label">Доля лидера</span>
+      {/* Top bar */}
+      <div className="results-topbar">
+        <h1 className="results-title">{data.question}</h1>
+        <div className="results-meta-stack">
+          <div className="live-pill"><span className="dot" />Live</div>
+          <div className="votes-pill">Проголосовали: <span>{data.total_votes}</span></div>
         </div>
       </div>
 
+      {/* Winner banner */}
+      {data.total_votes > 0 && (
+        <motion.div
+          className="winner-banner"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="winner-label">🏆 Лидирует</div>
+          <div className="winner-name">
+            <span className="w-emoji">{winner.emoji}</span>{winner.text}
+          </div>
+          <div className="winner-stats">
+            <div className="w-stat">
+              <span className="w-stat-num">{winnerPct}%</span>
+              <span className="w-stat-lbl">Доля голосов</span>
+            </div>
+            <div className="w-stat">
+              <span className="w-stat-num">{winner.votes}</span>
+              <span className="w-stat-lbl">Голосов</span>
+            </div>
+            <div className="w-stat">
+              <span className="w-stat-num">{data.total_votes}</span>
+              <span className="w-stat-lbl">Всего</span>
+            </div>
+          </div>
+          <div className="winner-trophy">🏆</div>
+        </motion.div>
+      )}
+
+      {/* Stats row */}
+      <div className="stats-row">
+        <div className="stat-box">
+          <span className="stat-box-num">{data.total_votes}</span>
+          <span className="stat-box-lbl">Голосов</span>
+        </div>
+        <div className="stat-box">
+          <span className="stat-box-num">{data.options.length}</span>
+          <span className="stat-box-lbl">Вариантов</span>
+        </div>
+        <div className="stat-box">
+          <span className="stat-box-num">{winnerPct}%</span>
+          <span className="stat-box-lbl">Доля лидера</span>
+        </div>
+      </div>
+
+      {/* Chart */}
       <div className="tabs">
-        <button className={`tab-btn ${view === 'bar' ? 'active' : ''}`} onClick={() => setView('bar')}>📊 Столбчатая</button>
-        <button className={`tab-btn ${view === 'pie' ? 'active' : ''}`} onClick={() => setView('pie')}>🥧 Круговая</button>
+        <button className={`tab-btn${view === 'bar' ? ' active' : ''}`} onClick={() => setView('bar')}>Столбцы</button>
+        <button className={`tab-btn${view === 'pie' ? ' active' : ''}`} onClick={() => setView('pie')}>Круговая</button>
       </div>
 
-      <div className="chart-wrapper">
-        <div className="chart-canvas-wrap">
+      <div className="chart-box">
+        <div className="chart-inner">
           {view === 'bar' ? <Bar data={chartData} options={chartOptions} /> : <Doughnut data={chartData} options={chartOptions} />}
         </div>
       </div>
 
-      <h2 style={{ fontSize: 16, fontWeight: 700, color: 'rgba(240,240,255,0.6)', textTransform: 'uppercase', marginBottom: 16 }}>
-        Детальный разбор
-      </h2>
-      
-      <div className="result-bars">
+      {/* Detail bars */}
+      <p className="result-title">Детальный разбор</p>
+      <div className="result-list">
         <AnimatePresence>
-          {sortedOptions.map((opt) => {
+          {sorted.map((opt, rank) => {
             const pct = data.total_votes > 0 ? Math.round((opt.votes / data.total_votes) * 100) : 0;
-            const colorIndex = data.options.findIndex(o => o.id === opt.id);
-            const color = CONFIG.OPTION_COLORS[colorIndex]?.bar || '#6c63ff';
+            const colorIdx = data.options.findIndex(o => o.id === opt.id);
+            const color = COLORS[colorIdx] || COLORS[0];
+            const isWinner = rank === 0 && data.total_votes > 0;
 
             return (
-              <motion.div 
+              <motion.div
                 key={opt.id}
                 layout
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ type: "spring", stiffness: 300, damping: 24 }}
-                className="result-bar-item"
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 280, damping: 22, delay: rank * 0.06 }}
+                className={`ritem${isWinner ? ' ritem--winner' : ''}`}
               >
-                <div className="rbi-top">
-                  <div className="rbi-label"><span className="rbi-emoji">{opt.emoji}</span><span>{opt.text}</span></div>
-                  <div className="rbi-stats"><span className="rbi-votes">{opt.votes} голосов</span><span className="rbi-pct">{pct}%</span></div>
+                <div className="ritem-top">
+                  <div className="ritem-label">
+                    <span className="ritem-emoji">{opt.emoji}</span>
+                    <span>{opt.text}</span>
+                    {isWinner && <span className="ritem-crown">👑</span>}
+                  </div>
+                  <div className="ritem-right">
+                    <span className="ritem-pct">{pct}%</span>
+                    <span className="ritem-votes">{opt.votes} гол.</span>
+                  </div>
                 </div>
-                <div className="rbi-track">
-                  <motion.div className="rbi-fill" animate={{ width: `${pct}%` }} transition={{ duration: 0.8 }} style={{ background: color }} />
+                <div className="ritem-track">
+                  <motion.div
+                    className="ritem-fill"
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 0.9, ease: [0.4,0,0.2,1] }}
+                    style={{ background: color }}
+                  />
                 </div>
               </motion.div>
             );
@@ -162,10 +191,12 @@ export default function Results() {
         </AnimatePresence>
       </div>
 
-      <p className="last-update">Последнее обновление: {lastUpdate}</p>
-
-      <div className="footer-link">
-        <Link to="/">🗳️ Перейти к голосованию</Link>
+      {/* Footer */}
+      <div className="page-footer">
+        <span className="footer-update">Обновлено: {lastUpdate}</span>
+        <div className="footer-nav">
+          <Link to="/">🗳 Проголосовать</Link>
+        </div>
       </div>
     </div>
   );
