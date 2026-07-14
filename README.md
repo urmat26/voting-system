@@ -1,105 +1,153 @@
-# 🗳️ Система голосования — Выпускной 2026
+# 🗳️ Voting System — Real-time School Voting Platform
 
-Проект по ТЗ: система голосования для школьных мероприятий.  
-Результаты обновляются в реальном времени (каждые 3 секунды).
+[![Live Demo](https://img.shields.io/badge/Live-Demo-success?style=for-the-badge&logo=vercel)](https://urmat26-voting-system.vercel.app/)
+[![HTML](https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS](https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)](https://www.chartjs.org/)
 
----
-
-## 📁 Структура файлов
-
-```
-index.html    — страница голосования (для телефонов)
-results.html  — страница результатов (для проектора)
-style.css     — стили (тёмная тема, анимации)
-app.js        — логика голосования
-results.js    — логика результатов + Chart.js
-config.js     — ⚙️ настройки API (редактировать!)
-```
+> A real-time voting platform built for school events. Students vote from their phones, results update live on the projector every 3 seconds.
 
 ---
 
-## ⚙️ Шаг 1 — Настройка JSONBin.io
+## ✨ Features
 
-1. Зайдите на [jsonbin.io](https://jsonbin.io) и зарегистрируйтесь (бесплатно)
-2. На дашборде нажмите **«+ New Bin»**
-3. Вставьте начальные данные:
+- 📱 **Mobile-first voting page** — optimized for student phones
+- 📊 **Live results dashboard** — auto-updates every 3 seconds via Chart.js (bar + pie charts)
+- 🔄 **Anti-spam protection** — prevents double voting using localStorage
+- 🎨 **Dark theme with animations** — sleek UI for school events
+- ⚡ **Scales to 200+ users** — powered by JSONBin.io + Vercel CDN
+
+---
+
+## 🖥️ Screens
+
+| Voting Page (Mobile) | Results (Projector) |
+|---|---|
+| Students vote from phones | Live charts for the auditorium |
+
+---
+
+## 🚀 Quick Start
+
+### 1. Setup JSONBin.io
+
+1. Go to [jsonbin.io](https://jsonbin.io) and sign up (free)
+2. Click **"+ New Bin"** and paste the initial data:
 
 ```json
 {
-  "question": "Какой формат выпускного?",
+  "question": "What format for the graduation party?",
   "options": [
-    { "id": 1, "text": "Ресторан",          "emoji": "🍽️", "votes": 0 },
-    { "id": 2, "text": "Пикник в парке",    "emoji": "🌿", "votes": 0 },
-    { "id": 3, "text": "Квест по городу",   "emoji": "🗺️", "votes": 0 },
-    { "id": 4, "text": "Кинотеатр + пицца", "emoji": "🎬", "votes": 0 }
+    { "id": 1, "text": "Restaurant",      "emoji": "🍽️", "votes": 0 },
+    { "id": 2, "text": "Picnic in the park",    "emoji": "🌿", "votes": 0 },
+    { "id": 3, "text": "City quest",   "emoji": "🗺️", "votes": 0 },
+    { "id": 4, "text": "Cinema + pizza", "emoji": "🎬", "votes": 0 }
   ],
   "total_votes": 0
 }
 ```
 
-4. Нажмите **Create Bin** → скопируйте **Bin ID** (из URL или из карточки)
-5. Перейдите в **Account → API Keys** → скопируйте **Master Key**
+3. Click **Create Bin** → copy your **Bin ID**
+4. Go to **Account → API Keys** → copy your **Master Key**
+
+### 2. Configure
+
+Open `config.js` and replace:
+
+```js
+BIN_ID:  'YOUR_BIN_ID_HERE',   // ← paste your Bin ID
+API_KEY: 'YOUR_API_KEY_HERE',  // ← paste your Master Key
+```
+
+### 3. Deploy to Vercel
+
+```bash
+# Fork this repo, then:
+vercel --prod
+```
+
+Or connect your GitHub repo at [vercel.com](https://vercel.com) for auto-deploy.
 
 ---
 
-## ⚙️ Шаг 2 — Вставить ключи в config.js
+## 📁 Project Structure
 
-Откройте `config.js` и замените:
-
-```js
-BIN_ID:  'YOUR_BIN_ID_HERE',   // ← вставьте ваш Bin ID
-API_KEY: 'YOUR_API_KEY_HERE',  // ← вставьте ваш Master Key
+```
+voting-system/
+├── index.html      # Voting page (for phones)
+├── results.html    # Results dashboard (for projector)
+├── style.css       # Dark theme + animations
+├── app.js          # Voting logic
+├── results.js      # Live results + Chart.js
+└── config.js       # ⚙️ API configuration
 ```
 
 ---
 
-## 🚀 Шаг 3 — Деплой на Vercel
+## 🔗 Live URLs
 
-1. Загрузите папку проекта на [GitHub](https://github.com)
-2. Зайдите на [vercel.com](https://vercel.com) → **New Project**
-3. Подключите ваш GitHub репозиторий
-4. Нажмите **Deploy** — Vercel автоматически задеплоит статические файлы
-5. Получите ссылку вида `https://voting-system-xxx.vercel.app`
-
----
-
-## 🔗 Использование
-
-| Страница | URL | Для кого |
-|----------|-----|---------|
-| Голосование | `https://ваш-сайт.vercel.app/` | Ученики (телефон) |
-| Результаты  | `https://ваш-сайт.vercel.app/results.html` | Проектор в зале |
+| Page | URL | Audience |
+|------|-----|----------|
+| Voting | `/` | Students (phone) |
+| Results | `/results.html` | Auditorium projector |
 
 ---
 
-## ✅ Чеклист критериев оценки
+## ⚡ How It Works
 
-- [x] Голосование работает с телефона
-- [x] Результаты обновляются без перезагрузки (каждые 3 сек)
-- [x] Нельзя проголосовать дважды (localStorage)
-- [x] Диаграмма читаемая (Chart.js — столбчатая + круговая)
-- [x] Выдерживает 200 пользователей (JSONBin + Vercel CDN)
-- [ ] История коммитов в GitHub (сделать самостоятельно)
-
----
-
-## 🛡️ Защита от повторного голосования
-
-Используется `localStorage` — базовая защита:
-- ✅ Работает для 99% обычных пользователей
-- ⚠️ Можно обойти через очистку браузера или другой браузер
-- 💡 Для MVP школьного мероприятия — достаточно
-- 🔐 В продакшене нужна авторизация (Google/Email)
+```
+Student opens voting page
+        ↓
+Selects option → clicks "Vote"
+        ↓
+PUT request to JSONBin.io
+        ↓
+Results page polls every 3s → Chart.js re-renders
+```
 
 ---
 
-## ❓ Частые вопросы
+## 🛡️ Anti-Cheat
 
-**Q: Почему не каждую секунду обновляется?**  
-A: 200 учеников × 1 запрос/сек = 200 запросов/сек. JSONBin бесплатный план не выдержит. 3 сек — оптимум.
+| Method | Effectiveness |
+|--------|---------------|
+| localStorage flag | Blocks 99% of casual users |
+| Browser/session reset | ⚠️ Can be bypassed |
+| **Recommendation** | For production: add Google/Email auth |
 
-**Q: Что если два человека нажмут одновременно?**  
-A: JSONBin обрабатывает PUT-запросы последовательно. Теоретически возможна race condition, но для 200 учеников в рамках школы — приемлемо.
+> For a school MVP with trusted students — localStorage is sufficient.
 
-**Q: Как сбросить голоса?**  
-A: В JSONBin Dashboard — отредактируйте Bin, верните все `votes: 0` и `total_votes: 0`.
+---
+
+## 🛠️ Tech Stack
+
+- **HTML5** — semantic markup
+- **CSS3** — dark theme, flexbox, CSS animations
+- **Vanilla JavaScript** — no frameworks, pure DOM manipulation
+- **Chart.js** — interactive bar and pie charts
+- **JSONBin.io** — free cloud JSON storage
+- **Vercel** — zero-config static hosting
+
+---
+
+## ❓ FAQ
+
+**Q: Why 3 seconds and not instant?**  
+A: 200 students × 1 req/sec = 200 req/sec. JSONBin free tier can't handle that. 3s is the sweet spot.
+
+**Q: Race conditions with simultaneous votes?**  
+A: JSONBin processes PUTs sequentially. Theoretically possible but acceptable for a school event.
+
+**Q: How to reset votes?**  
+A: Edit your Bin in JSONBin Dashboard — set all `votes: 0` and `total_votes: 0`.
+
+---
+
+## 📝 License
+
+MIT — feel free to use for your school events!
+
+---
+
+*Built for the Graduation 2026 🎓*
